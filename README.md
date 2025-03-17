@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Pilot Sunrise/Sunset Predictor (Offline) by Chris</title>
+  <title>Pilot Sunrise/Sunset Predictor (Offline)</title>
   <style>
     body {
       font-family: 'Segoe UI', Roboto, sans-serif;
@@ -104,7 +104,7 @@
     <div class="result" id="result">Enter your flight details and click Predict</div>
   </div>
 
-  <footer>© 2025 Pilot Tools</footer>
+  <footer>© 2025 Chris Sykes</footer>
 
   <script>
     function predictSunEvent() {
