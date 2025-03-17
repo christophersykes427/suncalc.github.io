@@ -1,260 +1,284 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Pilot Sunrise/Sunset Predictor (Offline)</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dynamic Sunrise & Sunset Predictor</title>
   <style>
     body {
-      font-family: 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #121212;
-      color: #e0e0e0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
+      color: #ffffff;
     }
-    h1 {
-      color: #03DAC6;
-      margin-bottom: 10px;
-    }
+
     .container {
-      background: #1f1f1f;
-      padding: 20px 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
       max-width: 600px;
-      width: 100%;
+      margin: 50px auto;
+      background: #1f1f1f;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
     }
+
+    h1 {
+      text-align: center;
+      color: #ffffff;
+      margin-bottom: 25px;
+    }
+
     label {
       display: block;
-      margin-top: 12px;
-      color: #BB86FC;
-      font-size: 0.9em;
+      margin-top: 15px;
+      color: #aaaaaa;
+      font-weight: 500;
     }
-    input {
-      width: 100%;
-      padding: 10px;
-      margin-top: 4px;
-      border-radius: 6px;
-      border: 1px solid #333;
-      background-color: #2c2c2c;
-      color: #e0e0e0;
-      font-size: 1em;
-    }
-    button {
-      margin-top: 20px;
+
+    input, select, button {
       width: 100%;
       padding: 12px;
+      margin-top: 5px;
+      border-radius: 12px;
       border: none;
-      border-radius: 6px;
-      background-color: #03DAC6;
-      color: #000;
-      font-weight: bold;
       font-size: 1em;
-      cursor: pointer;
-      transition: 0.3s;
+      outline: none;
+      box-sizing: border-box;
     }
-    button:hover {
-      background-color: #018786;
-    }
-    .result {
-      margin-top: 20px;
-      padding: 15px;
-      background-color: #2a2a2a;
-      border-radius: 8px;
+
+    input[type="number"],
+    input[type="date"],
+    select {
+      background: #2c2c2c;
       color: #ffffff;
-      text-align: center;
-      font-size: 1.2em;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
     }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+      cursor: pointer;
+    }
+
+    button {
+      background-color: #ff6f61;
+      color: #fff;
+      font-weight: bold;
+      margin-top: 25px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #e65c50;
+    }
+
+    .dms-input {
+      display: flex;
+      gap: 5px;
+    }
+
+    .dms-input input, .dms-input select {
+      flex: 1;
+    }
+
+    #result {
+      margin-top: 30px;
+      background: #292929;
+      padding: 20px;
+      border-radius: 12px;
+      font-size: 1.1em;
+      text-align: center;
+    }
+
     footer {
-      margin-top: 40px;
+      text-align: center;
       font-size: 0.8em;
-      color: #888;
+      color: #aaaaaa;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
-  <h1>Sunrise/Sunset Predictor (Offline)</h1>
-
   <div class="container">
-    <label>Present Latitude (°) "-" for S - XXX.XX</label>
-    <input type="number" id="lat" value="25.25" step="0.01">
+    <h1>Sunrise / Sunset Predictor (Offline)</h1>
 
-    <label>Present Longitude (°) "-" for W - XXX.XX</label>
-    <input type="number" id="lon" value="55.36" step="0.01">
 
-    <label>Altitude (feet)</label>
-    <input type="number" id="altitude" value="35000">
 
-    <label>Groundspeed (knots)</label>
-    <input type="number" id="gs" value="480">
+    <label>Present Latitude</label>
+    <div class="dms-input">
+      <input type="number" id="latDeg" placeholder="Degrees" value="25"/>
+      <input type="number" id="latMin" placeholder="Minutes" value="12"/>
+      <input type="number" id="latSec" placeholder="Seconds" value="17"/>
+      <select id="latDir">
+        <option value="1" selected>N</option>
+        <option value="-1">S</option>
+      </select>
+    </div>
 
-    <label>Track (degrees)</label>
-    <input type="number" id="track" value="90">
+    <label>Present Longitude</label>
+    <div class="dms-input">
+      <input type="number" id="lonDeg" placeholder="Degrees" value="55"/>
+      <input type="number" id="lonMin" placeholder="Minutes" value="16"/>
+      <input type="number" id="lonSec" placeholder="Seconds" value="14"/>
+      <select id="lonDir">
+        <option value="1" selected>E</option>
+        <option value="-1">W</option>
+      </select>
+    </div>
 
-    <label>Date</label>
-    <input type="date" id="date" required>
+    <label for="altitude">Altitude (feet)</label>
+    <input type="number" id="altitude" min="0" value="35000"/>
 
-    <label>Timezone Offset (hours)</label>
-    <input type="number" id="tz" value="4">
+    <label for="groundspeed">Groundspeed (knots)</label>
+    <input type="number" id="groundspeed" min="0" value="450"/>
+   
+    <label for="track">Track (degrees)</label>
+    <input type="number" id="track" min="0" max="360" value="299"/>
 
-    <button onclick="predictSunEvent()">Predict</button>
+    <label for="date">Date</label>
+    <input type="date" id="date"/>
 
-    <div class="result" id="result">Enter your flight details and click Predict</div>
+    <label for="timeOffset">Local Time Offset (UTC ± hours)</label>
+    <input type="number" id="timeOffset" min="-12" max="14" step="1" value="4"/>
+
+    <button id="calculate">Calculate</button>
+
+    <div id="result"></div>
+
+    <footer>Chris Sykes 2025</footer>
   </div>
 
-  <footer>© 2025 Chris Sykes</footer>
-
   <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const dd = String(today.getDate()).padStart(2, '0');
+      document.getElementById('date').value = `${yyyy}-${mm}-${dd}`;
+    });
 
-// Autopopulate date field with today
-window.addEventListener('DOMContentLoaded', (event) => {
-    const dateInput = document.getElementById('date');
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
-    
-    dateInput.value = `${yyyy}-${mm}-${dd}`;
-});
-
-
-    function predictSunEvent() {
-      let lat = parseFloat(document.getElementById("lat").value);
-      let lon = parseFloat(document.getElementById("lon").value);
-      const altitudeFt = parseFloat(document.getElementById("altitude").value);
-      const gs = parseFloat(document.getElementById("gs").value);
-      const trackDeg = parseFloat(document.getElementById("track").value);
-      const dateStr = document.getElementById("date").value;
-      const tz = parseFloat(document.getElementById("tz").value);
-
-      const resultDiv = document.getElementById("result");
-      resultDiv.innerHTML = "Calculating...";
-
-      const date = new Date(dateStr + "T00:00:00Z");
-      let sunriseUTC = calcSunTime(lat, lon, date, true);
-      let sunsetUTC = calcSunTime(lat, lon, date, false);
-
-      const altitudeCorrectionMin = getAltitudeCorrection(altitudeFt);
-
-      // Adjust sunrise/sunset time for altitude dip angle
-      let sunriseMinutes = timeStringToMinutes(sunriseUTC) - altitudeCorrectionMin;
-      let sunsetMinutes = timeStringToMinutes(sunsetUTC) + altitudeCorrectionMin;
-
-      // Compute time deltas in hours
-      const sunriseHoursFromNow = (sunriseMinutes - timeStringToMinutes(currentUTCTime())) / 60;
-      const sunsetHoursFromNow = (sunsetMinutes - timeStringToMinutes(currentUTCTime())) / 60;
-
-      // Calculate new positions based on groundspeed and track for sunrise and sunset
-      const sunrisePos = movePosition(lat, lon, gs, trackDeg, sunriseHoursFromNow);
-      const sunsetPos = movePosition(lat, lon, gs, trackDeg, sunsetHoursFromNow);
-
-      // Recalculate sunrise/sunset based on predicted positions
-      sunriseUTC = calcSunTime(sunrisePos.lat, sunrisePos.lon, date, true);
-      sunsetUTC = calcSunTime(sunsetPos.lat, sunsetPos.lon, date, false);
-
-      // Reapply altitude corrections
-      sunriseMinutes = timeStringToMinutes(sunriseUTC) - altitudeCorrectionMin;
-      sunsetMinutes = timeStringToMinutes(sunsetUTC) + altitudeCorrectionMin;
-
-      // Apply timezone adjustment
-      const sunriseLocal = minutesToTimeString(sunriseMinutes + tz * 60);
-      const sunsetLocal = minutesToTimeString(sunsetMinutes + tz * 60);
-
-      resultDiv.innerHTML = `
-        <strong>Future Position at Sunrise:</strong><br>
-        Lat: ${sunrisePos.lat.toFixed(4)}°, Lon: ${sunrisePos.lon.toFixed(4)}°<br><br>
-        <strong>Future Position at Sunset:</strong><br>
-        Lat: ${sunsetPos.lat.toFixed(4)}°, Lon: ${sunsetPos.lon.toFixed(4)}°<br><br>
-        <strong>Sunrise (Local Time):</strong> ${sunriseLocal}<br>
-        <strong>Sunset (Local Time):</strong> ${sunsetLocal}
-      `;
+    function dmsToDecimal(deg, min, sec, dir) {
+      const decimal = Math.abs(deg) + (min / 60) + (sec / 3600);
+      return decimal * dir;
     }
 
-    function calcSunTime(lat, lon, date, isSunrise) {
-      const zenith = 90.833;
-      const D2R = Math.PI / 180;
-      const R2D = 180 / Math.PI;
-
-      const N = Math.floor((date - new Date(date.getUTCFullYear(), 0, 0)) / 86400000);
-      const lngHour = lon / 15;
-
-      let t = isSunrise ? N + ((6 - lngHour) / 24) : N + ((18 - lngHour) / 24);
-
-      const M = (0.9856 * t) - 3.289;
-      let L = M + (1.916 * Math.sin(M * D2R)) + (0.020 * Math.sin(2 * M * D2R)) + 282.634;
-      L = (L + 360) % 360;
-
-      const RA = (R2D * Math.atan(0.91764 * Math.tan(L * D2R))) % 360;
-      const Lquadrant = Math.floor(L / 90) * 90;
-      const RAquadrant = Math.floor(RA / 90) * 90;
-      const RAfinal = (RA + (Lquadrant - RAquadrant)) / 15;
-
-      const sinDec = 0.39782 * Math.sin(L * D2R);
-      const cosDec = Math.cos(Math.asin(sinDec));
-
-      const cosH = (Math.cos(zenith * D2R) - (sinDec * Math.sin(lat * D2R))) / (cosDec * Math.cos(lat * D2R));
-
-      if (cosH > 1 || cosH < -1) return "No event";
-
-      let H = isSunrise ? 360 - R2D * Math.acos(cosH) : R2D * Math.acos(cosH);
-      H = H / 15;
-
-      const T = H + RAfinal - (0.06571 * t) - 6.622;
-      let UT = (T - lngHour) % 24;
-      if (UT < 0) UT += 24;
-
-      const hours = Math.floor(UT);
-      const minutes = Math.floor((UT - hours) * 60);
-      return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+    function formatTime(dateObj, offsetHours = 0) {
+      if (!dateObj || isNaN(dateObj.getTime())) return 'Never';
+      const localDate = new Date(dateObj.getTime() + offsetHours * 60 * 60 * 1000);
+      const hrs = localDate.getUTCHours().toString().padStart(2, '0');
+      const mins = localDate.getUTCMinutes().toString().padStart(2, '0');
+      return `${hrs}:${mins} UTC${offsetHours >= 0 ? '+' : ''}${offsetHours}`;
     }
 
-    function movePosition(lat, lon, speedKnots, trackDeg, hoursAhead) {
-      const earthRadiusNm = 3440.065;
-      const distanceNm = speedKnots * hoursAhead;
+    function movePosition(lat, lon, trackDeg, distanceNM) {
+      const R = 3440.065; // Earth's radius in nautical miles
+      const bearing = trackDeg * Math.PI / 180;
+      const lat1 = lat * Math.PI / 180;
+      const lon1 = lon * Math.PI / 180;
+      const d = distanceNM / R;
 
-      const trackRad = trackDeg * Math.PI / 180;
-      const latRad = lat * Math.PI / 180;
-      const lonRad = lon * Math.PI / 180;
-
-      const newLatRad = Math.asin(Math.sin(latRad) * Math.cos(distanceNm / earthRadiusNm) +
-        Math.cos(latRad) * Math.sin(distanceNm / earthRadiusNm) * Math.cos(trackRad));
-
-      const newLonRad = lonRad + Math.atan2(
-        Math.sin(trackRad) * Math.sin(distanceNm / earthRadiusNm) * Math.cos(latRad),
-        Math.cos(distanceNm / earthRadiusNm) - Math.sin(latRad) * Math.sin(newLatRad)
-      );
+      const lat2 = Math.asin(Math.sin(lat1) * Math.cos(d) +
+        Math.cos(lat1) * Math.sin(d) * Math.cos(bearing));
+      const lon2 = lon1 + Math.atan2(Math.sin(bearing) * Math.sin(d) * Math.cos(lat1),
+        Math.cos(d) - Math.sin(lat1) * Math.sin(lat2));
 
       return {
-        lat: newLatRad * 180 / Math.PI,
-        lon: ((newLonRad * 180 / Math.PI + 540) % 360) - 180
+        lat: lat2 * 180 / Math.PI,
+        lon: lon2 * 180 / Math.PI
       };
     }
 
-    function getAltitudeCorrection(altitudeFt) {
-      const radiusEarthFt = 20925524.9;
-      const dipAngleRad = Math.sqrt(2 * altitudeFt / radiusEarthFt);
-      const dipDegrees = dipAngleRad * (180 / Math.PI);
-      return dipDegrees * 4;
-    }
+    document.getElementById('calculate').addEventListener('click', () => {
+      const dateStr = document.getElementById('date').value;
+      const latDeg = parseFloat(document.getElementById('latDeg').value);
+      const latMin = parseFloat(document.getElementById('latMin').value);
+      const latSec = parseFloat(document.getElementById('latSec').value);
+      const latDir = parseInt(document.getElementById('latDir').value);
+      const lonDeg = parseFloat(document.getElementById('lonDeg').value);
+      const lonMin = parseFloat(document.getElementById('lonMin').value);
+      const lonSec = parseFloat(document.getElementById('lonSec').value);
+      const lonDir = parseInt(document.getElementById('lonDir').value);
+      const altitude = parseFloat(document.getElementById('altitude').value);
+      const manualOffset = parseInt(document.getElementById('timeOffset').value);
+      const track = parseFloat(document.getElementById('track').value);
+      const groundspeed = parseFloat(document.getElementById('groundspeed').value);
 
-    function timeStringToMinutes(timeStr) {
-      if (timeStr === "No event") return 0;
-      const [h, m] = timeStr.split(':').map(Number);
-      return h * 60 + m;
-    }
+      const latitude = dmsToDecimal(latDeg, latMin, latSec, latDir);
+      const longitude = dmsToDecimal(lonDeg, lonMin, lonSec, lonDir);
 
-    function minutesToTimeString(totalMinutes) {
-      totalMinutes = (totalMinutes + 1440) % 1440;
-      const h = Math.floor(totalMinutes / 60);
-      const m = Math.floor(totalMinutes % 60);
-      return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-    }
+      const resultDiv = document.getElementById('result');
+      const dateObj = new Date(dateStr + 'T00:00:00Z');
+      if (isNaN(dateObj.getTime())) {
+        resultDiv.innerHTML = 'Invalid date!';
+        return;
+      }
 
-    function currentUTCTime() {
-      const now = new Date();
-      return `${String(now.getUTCHours()).padStart(2, '0')}:${String(now.getUTCMinutes()).padStart(2, '0')}`;
+      const times = getAccurateSunriseSunset(dateObj, latitude, longitude, altitude);
+
+      const sunriseTime = times.sunrise;
+      const sunsetTime = times.sunset;
+
+      // Calculate flight time in minutes from start time to sunrise/sunset
+      const msPerMin = 60000;
+      const startTime = dateObj.getTime();
+      const sunriseMinDiff = (sunriseTime.getTime() - startTime) / msPerMin;
+      const sunsetMinDiff = (sunsetTime.getTime() - startTime) / msPerMin;
+
+      const sunriseDistanceNM = (groundspeed / 60) * sunriseMinDiff;
+      const sunsetDistanceNM = (groundspeed / 60) * sunsetMinDiff;
+
+      const sunrisePos = movePosition(latitude, longitude, track, sunriseDistanceNM);
+      const sunsetPos = movePosition(latitude, longitude, track, sunsetDistanceNM);
+
+      resultDiv.innerHTML = `
+        
+        
+
+        <strong>Sunrise Encounter:</strong><br/>
+        UTC: ${sunriseTime ? sunriseTime.toUTCString() : 'Not encountered'}<br/>
+        Local (UTC${manualOffset >= 0 ? '+' : ''}${manualOffset}): ${sunriseTime ? formatTime(sunriseTime, manualOffset) : 'N/A'}<br/>
+        Position at Sunrise: ${sunrisePos.lat.toFixed(6)}°, ${sunrisePos.lon.toFixed(6)}°<br/><br/>
+
+        <strong>Sunset Encounter:</strong><br/>
+        UTC: ${sunsetTime ? sunsetTime.toUTCString() : 'Not encountered'}<br/>
+        Local (UTC${manualOffset >= 0 ? '+' : ''}${manualOffset}): ${sunsetTime ? formatTime(sunsetTime, manualOffset) : 'N/A'}<br/>
+        Position at Sunset: ${sunsetPos.lat.toFixed(6)}°, ${sunsetPos.lon.toFixed(6)}°`;
+    });
+
+    function getAccurateSunriseSunset(date, lat, lon, altFeet = 0) {
+      const rad = Math.PI / 180;
+      const J2000 = Date.UTC(2000, 0, 1, 12);
+      const msPerDay = 86400000;
+      const n = (date.getTime() - J2000) / msPerDay;
+      const meanLongitude = (280.46 + 0.9856474 * n) % 360;
+      const meanAnomaly = (357.528 + 0.9856003 * n) % 360;
+      const eclipticLongitude = meanLongitude + 1.915 * Math.sin(meanAnomaly * rad) + 0.02 * Math.sin(2 * meanAnomaly * rad);
+      const obliquity = 23.439 - 0.0000004 * n;
+
+      const declination = Math.asin(Math.sin(obliquity * rad) * Math.sin(eclipticLongitude * rad)) / rad;
+
+      const eqTime = (meanLongitude - 0.0057183 - eclipticLongitude + 
+                      -20.4898 / (3600)) / 15;
+
+      const solarNoon = (720 - 4 * lon - eqTime * 60) / 1440;
+
+      const altKm = altFeet * 0.0003048;
+      const earthRadius = 6371;
+      const hCorrection = Math.acos(earthRadius / (earthRadius + altKm)) / rad;
+
+      const ha = (Math.acos(Math.cos((90.833 - hCorrection) * rad) / 
+                (Math.cos(lat * rad) * Math.cos(declination * rad)) - 
+                Math.tan(lat * rad) * Math.tan(declination * rad))) / rad;
+
+      const sunriseTime = solarNoon - ha * 4 / 1440;
+      const sunsetTime = solarNoon + ha * 4 / 1440;
+
+      const sunriseDate = new Date(date.getTime() + sunriseTime * msPerDay);
+      const sunsetDate = new Date(date.getTime() + sunsetTime * msPerDay);
+
+      return { sunrise: sunriseDate, sunset: sunsetDate };
     }
   </script>
 </body>
