@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dynamic Sunrise & Sunset Predictor</title>
+  <title>Sunrise & Sunset Predictor</title>
   <style>
     body {
       margin: 0;
@@ -102,30 +102,32 @@
 </head>
 <body>
   <div class="container">
-    <h1>Sunrise / Sunset Predictor (Offline)</h1>
+    <h1>Sunrise & Sunset Predictor</h1>
 
 
 
     <label>Present Latitude</label>
     <div class="dms-input">
-      <input type="number" id="latDeg" placeholder="Degrees" value="25"/>
-      <input type="number" id="latMin" placeholder="Minutes" value="12"/>
-      <input type="number" id="latSec" placeholder="Seconds" value="17"/>
       <select id="latDir">
         <option value="1" selected>N</option>
         <option value="-1">S</option>
       </select>
+      <input type="number" id="latDeg" placeholder="Degrees" value="25"/>°
+      <input type="number" id="latMin" placeholder="Minutes" value="12"/>.
+      <input type="number" id="latSec" placeholder="Seconds" value="17"/>
+
     </div>
 
     <label>Present Longitude</label>
     <div class="dms-input">
-      <input type="number" id="lonDeg" placeholder="Degrees" value="55"/>
-      <input type="number" id="lonMin" placeholder="Minutes" value="16"/>
-      <input type="number" id="lonSec" placeholder="Seconds" value="14"/>
       <select id="lonDir">
         <option value="1" selected>E</option>
         <option value="-1">W</option>
       </select>
+      <input type="number" id="lonDeg" placeholder="Degrees" value="55"/>°
+      <input type="number" id="lonMin" placeholder="Minutes" value="16"/>.
+      <input type="number" id="lonSec" placeholder="Seconds" value="14"/>
+
     </div>
 
     <label for="altitude">Altitude (feet)</label>
