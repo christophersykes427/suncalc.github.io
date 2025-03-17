@@ -94,7 +94,7 @@
     <input type="number" id="track" value="90">
 
     <label>Date</label>
-    <input type="date" id="date" value="2025-03-18">
+    <input type="date" id="date" required>
 
     <label>Timezone Offset (hours)</label>
     <input type="number" id="tz" value="4">
@@ -104,9 +104,22 @@
     <div class="result" id="result">Enter your flight details and click Predict</div>
   </div>
 
-  <footer>© 2025 Chris Sykes</footer>
+  <footer>© 2025 Pilot Tools</footer>
 
   <script>
+
+// Autopopulate date field with today
+window.addEventListener('DOMContentLoaded', (event) => {
+    const dateInput = document.getElementById('date');
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    
+    dateInput.value = `${yyyy}-${mm}-${dd}`;
+});
+
+
     function predictSunEvent() {
       let lat = parseFloat(document.getElementById("lat").value);
       let lon = parseFloat(document.getElementById("lon").value);
@@ -246,3 +259,4 @@
   </script>
 </body>
 </html>
+
